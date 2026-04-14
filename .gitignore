@@ -1,0 +1,9 @@
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.sln.docstates
+.DS_Store
+Thumbs.db
+appsettings.Development.json
