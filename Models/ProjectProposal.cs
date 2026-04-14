@@ -6,21 +6,22 @@ namespace PUSL2020_Blind_Match_PAS.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Title is required")]
-        [StringLength(100, MinimumLength = 5)]
+        [Required]
+        [StringLength(100)]
         public string Title { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Abstract is required")]
+        [Required]
         [StringLength(2000)]
         public string Abstract { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Technical Stack is required")]
+        [Required]
         public string TechnicalStack { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Please select a Research Area")]
+        [Required]
         public string ResearchArea { get; set; } = string.Empty;
 
         public string Status { get; set; } = "Pending";
+
         public bool IsIdentityRevealed { get; set; } = false;
 
         public string StudentId { get; set; } = string.Empty;
