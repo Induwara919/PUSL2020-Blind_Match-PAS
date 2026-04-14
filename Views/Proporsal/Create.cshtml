@@ -1,0 +1,52 @@
+﻿@model PUSL2020_Blind_Match_PAS.Models.ProjectProposal
+
+@{
+    ViewData["Title"] = "Submit Project Proposal";
+}
+
+<div class="container mt-4">
+    <h2>Submit Your Project Proposal</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Title" class="control-label fw-bold"></label>
+                    <input asp-for="Title" class="form-control" placeholder="Enter project title" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Abstract" class="control-label fw-bold"></label>
+                    <textarea asp-for="Abstract" class="form-control" rows="5" placeholder="Provide a brief summary of the project"></textarea>
+                    <span asp-validation-for="Abstract" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="TechnicalStack" class="control-label fw-bold"></label>
+                    <input asp-for="TechnicalStack" class="form-control" placeholder="e.g., ASP.NET Core, SQL Server, React" />
+                    <span asp-validation-for="TechnicalStack" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="ResearchArea" class="control-label fw-bold"></label>
+                    <select asp-for="ResearchArea" class="form-control">
+                        <option value="">-- Select Research Area --</option>
+                        <option value="Artificial Intelligence">Artificial Intelligence</option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Cybersecurity">Cybersecurity</option>
+                        <option value="Cloud Computing">Cloud Computing</option>
+                    </select>
+                    <span asp-validation-for="ResearchArea" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Submit Proposal</button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
