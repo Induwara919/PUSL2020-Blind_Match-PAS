@@ -15,10 +15,9 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
             _context = context;
         }
 
-        // Section 4.2: Browse anonymous proposals with optional category filtering
+        
         public async Task<IActionResult> Dashboard(string searchArea)
         {
-            // Only fetch projects where identity is hidden
             var query = _context.Proposals.Where(p => !p.IsIdentityRevealed);
 
             if (!string.IsNullOrEmpty(searchArea))
