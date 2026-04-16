@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PUSL2020_Blind_Match_PAS.Data;
 using System.Threading.Tasks;
@@ -15,13 +15,21 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Dashboard()
+        
+        public async Task<IActionResult> Dashboard(string searchArea)
         {
-            var anonymousProposals = await _context.Proposals
-                .Where(p => p.IsIdentityRevealed == false)
-                .ToListAsync();
+            var query = _context.Proposals.Where(p => !p.IsIdentityRevealed);
 
-            return View(anonymousProposals);
+            if (!string.IsNullOrEmpty(searchArea))
+            {
+                query = query.Where(p => p.ResearchArea == searchArea);
+            }
+
+            var proposals = await query.ToListAsync();
+            
+            ViewBag.CurrentFilter = searchArea;
+            
+            return View(proposals);
         }
     }
 }
