@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PUSL2020_Blind_Match_PAS.Data;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PUSL2020_Blind_Match_PAS.Controllers
@@ -19,6 +20,15 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
             var allProposals = await _context.Proposals.ToListAsync();
             return View(allProposals);
         }
+
+      
+        public IActionResult ManageTags()
+        {
+         
+            var tags = new List<string> { "Artificial Intelligence", "Web Development", "Cybersecurity", "Cloud Computing" };
+            return View(tags);
+        }
+
         [HttpPost]
         public async Task<IActionResult> ResetStatus(int id)
         {
