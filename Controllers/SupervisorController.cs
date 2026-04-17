@@ -15,21 +15,26 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
             _context = context;
         }
 
-        
         public async Task<IActionResult> Dashboard(string searchArea)
         {
             var query = _context.Proposals.Where(p => !p.IsIdentityRevealed);
-
             if (!string.IsNullOrEmpty(searchArea))
             {
                 query = query.Where(p => p.ResearchArea == searchArea);
             }
-
             var proposals = await query.ToListAsync();
-            
             ViewBag.CurrentFilter = searchArea;
-            
             return View(proposals);
+        }
+
+        public async Task<IActionResult> MyMatches()
+        {
+  
+            var matchedProjects = await _context.Proposals
+                .Where(p => p.IsIdentityRevealed == true && p.Status == "Matched")
+                .ToListAsync();
+
+            return View(matchedProjects);
         }
     }
 }
