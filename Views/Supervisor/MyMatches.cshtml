@@ -1,0 +1,37 @@
+@model IEnumerable<PUSL2020_Blind_Match_PAS.Models.ProjectProposal>
+
+@{
+    ViewData["Title"] = "My Confirmed Matches";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Confirmed Student Matches</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">You have no confirmed matches yet. Check the Dashboard to express interest in projects!</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card border-success shadow">
+                        <div class="card-header bg-success text-white">
+                            Match Confirmed
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Title</h5>
+                            <hr />
+                            <p><strong>Student Name:</strong> @item.StudentName</p>
+                            <p><strong>Student ID:</strong> @item.StudentId</p>
+                            <p><strong>Research Area:</strong> @item.ResearchArea</p>
+                            <p class="mt-3"><strong>Project Abstract:</strong><br />@item.Abstract</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
