@@ -1,44 +1,68 @@
 @model IEnumerable<PUSL2020_Blind_Match_PAS.Models.ProjectProposal>
 
 @{
-    ViewData["Title"] = "Supervisor Dashboard";
+    ViewData["Title"] = "Blind Review Dashboard";
+    var tags = ViewBag.AvailableTags as List<string>;
 }
 
 <div class="container mt-4">
-    <h2 class="mb-4">Anonymous Project Proposals</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Blind Review Dashboard</h2>
+        <a asp-action="MyMatches" class="btn btn-outline-success">View My Matches</a>
+    </div>
 
-    <form asp-action="Dashboard" method="get" class="mb-4">
-        <div class="input-group" style="max-width: 400px;">
-            <select name="searchArea" class="form-control">
-                <option value="">All Research Areas</option>
-                <option value="Artificial Intelligence">Artificial Intelligence</option>
-                <option value="Web Development">Web Development</option>
-                <option value="Cybersecurity">Cybersecurity</option>
-                <option value="Cloud Computing">Cloud Computing</option>
-            </select>
-            <button type="submit" class="btn btn-secondary">Filter</button>
+    <div class="card bg-light mb-4 border-0 shadow-sm">
+        <div class="card-body">
+            <form method="get" asp-action="Dashboard" class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label class="fw-bold">My Expertise / Filter Area:</label>
+                </div>
+                <div class="col-auto">
+                    <select name="selectedArea" class="form-select">
+                        <option value="">-- All Research Areas --</option>
+                        @if (tags != null)
+                        {
+                            foreach (var tag in tags)
+                            {
+                                <option value="@tag" selected="@(ViewBag.SelectedArea == tag)">@tag</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Update Filter</button>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 
-    <div class="row">
-        @foreach (var item in Model) {
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm border-primary">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">@item.Title</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Area: @item.ResearchArea</h6>
-                        <p class="card-text"><strong>Tech Stack:</strong> @item.TechnicalStack</p>
-                        <p class="card-text">@item.Abstract</p>
-                        <hr />
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-info text-dark">Status: @item.Status</span>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-secondary text-center">No anonymous proposals found for the selected area.</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-primary shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">@item.Title</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Area: @item.ResearchArea</h6>
+                            <p class="card-text small">@item.Abstract</p>
+                            <p class="card-text"><strong>Tech Stack:</strong> @item.TechnicalStack</p>
+                            
                             <form asp-controller="Match" asp-action="Confirm" asp-route-id="@item.Id" method="post">
                                 <button type="submit" class="btn btn-sm btn-success">Express Interest</button>
                             </form>
                         </div>
+                        <div class="card-footer bg-white border-0 py-2">
+                            <small class="text-danger fw-bold"><i class="fas fa-user-secret"></i> Identity Hidden</small>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
 </div>
