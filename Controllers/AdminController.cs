@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PUSL2020_Blind_Match_PAS.Data;
 using PUSL2020_Blind_Match_PAS.Models;
-using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace PUSL2020_Blind_Match_PAS.Controllers
 {
@@ -23,7 +24,8 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
 
         public async Task<IActionResult> ManageTags()
         {
-            return View(await _context.Tags.ToListAsync());
+            var tags = await _context.Tags.ToListAsync();
+            return View(tags);
         }
 
         [HttpPost]
@@ -35,6 +37,22 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(ManageTags));
+        }
+
+        public IActionResult RegisterUser()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterUser(string fullName, string email, string role, string studentId = null)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
         }
 
         [HttpPost]

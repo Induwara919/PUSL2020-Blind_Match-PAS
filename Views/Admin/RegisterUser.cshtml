@@ -1,0 +1,69 @@
+@{
+    ViewData["Title"] = "Register New User";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-user-plus me-2"></i> Register New User Account</h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted mb-4">Complete the form below to grant access to a Student or Faculty member.</p>
+                    
+                    <form asp-action="RegisterUser" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Full Name</label>
+                            <input type="text" name="fullName" class="form-control" placeholder="Enter legal full name" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email Address</label>
+                            <input type="email" name="email" class="form-control" placeholder="e.g. name@nsbm.ac.lk" required />
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">User Role</label>
+                                <select name="role" id="roleSelect" class="form-select" onchange="toggleStudentId()">
+                                    <option value="Student">Student (Individual/Lead)</option>
+                                    <option value="Supervisor">Supervisor (Faculty)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6" id="studentIdContainer">
+                                <label class="form-label fw-bold">Student ID</label>
+                                <input type="text" name="studentId" class="form-control" placeholder="e.g. 2100xxxx" />
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info py-2 small">
+                            <i class="fas fa-info-circle me-1"></i> Temporary passwords will be generated and sent to the registered email.
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-4">Create Account</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleStudentId() {
+            var role = document.getElementById("roleSelect").value;
+            var container = document.getElementById("studentIdContainer");
+            if (role === "Supervisor") {
+                container.style.visibility = "hidden";
+            } else {
+                container.style.visibility = "visible";
+            }
+        }
+    </script>
+}
