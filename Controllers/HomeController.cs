@@ -1,6 +1,7 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using PUSL2020_Blind_Match_PAS.Models;
+using System.Diagnostics;
 
 namespace PUSL2020_Blind_Match_PAS.Controllers
 {
@@ -14,11 +15,6 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
         }
 
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }
