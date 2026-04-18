@@ -12,5 +12,6 @@ namespace PUSL2020_Blind_Match_PAS.Data
         }
 
         public DbSet<ProjectProposal> Proposals { get; set; }
+        public DbSet<Tag> Tags { get; set; }
     }
 }
