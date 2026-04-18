@@ -1,31 +1,32 @@
-@model IEnumerable<string>
-
-@{
-    ViewData["Title"] = "Manage Research Areas";
-}
+@model IEnumerable<PUSL2020_Blind_Match_PAS.Models.Tag>
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Research Area Management</h2>
-        <a asp-action="Index" class="btn btn-outline-secondary">Back to Oversight</a>
-    </div>
-
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            Current Active Tags
+    <h2>Manage Research Areas</h2>
+    
+    <form asp-action="AddTag" method="post" class="row g-3 mb-4">
+        <div class="col-auto">
+            <input type="text" name="tagName" class="form-control" placeholder="New Area (e.g. AI)" required>
         </div>
-        <ul class="list-group list-group-flush">
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Add Tag</button>
+        </div>
+    </form>
+
+    <table class="table table-hover border shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Research Area Name</th>
+            </tr>
+        </thead>
+        <tbody>
             @foreach (var tag in Model)
             {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    @tag
-                    <span class="badge bg-success rounded-pill">Active</span>
-                </li>
+                <tr>
+                    <td>@tag.Id</td>
+                    <td>@tag.Name</td>
+                </tr>
             }
-        </ul>
-    </div>
-
-    <div class="alert alert-info mt-4">
-        <strong>Note:</strong> These tags populate the dropdown menus for Students and Supervisors to ensure data consistency.
-    </div>
+        </tbody>
+    </table>
 </div>
