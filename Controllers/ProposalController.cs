@@ -16,39 +16,33 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
             _context = context;
         }
 
-       
         public IActionResult Create()
         {
-            return View();
+            return View("~/Views/Proporsal/Create.cshtml");
         }
 
-       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProjectProposal proposal)
         {
             if (ModelState.IsValid)
             {
-                
                 proposal.Status = "Pending";
                 proposal.IsIdentityRevealed = false;
 
                 _context.Add(proposal);
                 await _context.SaveChangesAsync();
 
-                
                 return RedirectToAction(nameof(MyProposals));
             }
-            return View(proposal);
+            return View("~/Views/Proporsal/Create.cshtml", proposal);
         }
 
-        
         public async Task<IActionResult> MyProposals()
         {
-           
             var proposals = await _context.Proposals.ToListAsync();
 
-            return View(proposals);
+            return View("~/Views/Proporsal/MyProposals.cshtml", proposals);
         }
     }
 }
