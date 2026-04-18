@@ -1,0 +1,49 @@
+@model PUSL2020_Blind_Match_PAS.Models.ProjectProposal
+
+@{
+    ViewData["Title"] = "Edit Proposal";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0">Edit Project Proposal</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Status" />
+                <input type="hidden" asp-for="IsIdentityRevealed" />
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label fw-bold"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ResearchArea" class="form-label fw-bold"></label>
+                    <input asp-for="ResearchArea" class="form-control" />
+                    <span asp-validation-for="ResearchArea" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Abstract" class="form-label fw-bold"></label>
+                    <textarea asp-for="Abstract" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Abstract" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TechnicalStack" class="form-label fw-bold"></label>
+                    <input asp-for="TechnicalStack" class="form-control" />
+                    <span asp-validation-for="TechnicalStack" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="MyProposals" class="btn btn-secondary">Back to List</a>
+                    <button type="submit" class="btn btn-warning px-4">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
