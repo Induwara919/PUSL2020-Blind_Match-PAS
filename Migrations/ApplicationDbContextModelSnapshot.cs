@@ -74,6 +74,23 @@ namespace PUSL2020_Blind_Match_PAS.Migrations
 
                     b.ToTable("Proposals");
                 });
+
+            modelBuilder.Entity("PUSL2020_Blind_Match_PAS.Models.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags");
+                });
 #pragma warning restore 612, 618
         }
     }

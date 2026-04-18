@@ -11,8 +11,8 @@ using PUSL2020_Blind_Match_PAS.Data;
 namespace PUSL2020_Blind_Match_PAS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260414133444_AddValidationRules")]
-    partial class AddValidationRules
+    [Migration("20260418142842_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,6 +76,23 @@ namespace PUSL2020_Blind_Match_PAS.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Proposals");
+                });
+
+            modelBuilder.Entity("PUSL2020_Blind_Match_PAS.Models.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags");
                 });
 #pragma warning restore 612, 618
         }
