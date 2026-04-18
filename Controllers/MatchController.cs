@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using PUSL2020_Blind_Match_PAS.Data;
 using PUSL2020_Blind_Match_PAS.Models;
+using PUSL2020_Blind_Match_PAS.Data;
+using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace PUSL2020_Blind_Match_PAS.Controllers
 {
@@ -19,9 +20,11 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Confirm(int id)
         {
             var user = await _userManager.GetUserAsync(User);
+
             var proposal = await _context.Proposals.FindAsync(id);
 
             if (proposal != null)
@@ -29,12 +32,16 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
                 proposal.SupervisorName = user.FullName;
                 proposal.SupervisorId = user.Id;
                 proposal.SupervisorContact = user.Email;
+
                 proposal.Status = "Matched";
                 proposal.IsIdentityRevealed = true; 
 
                 await _context.SaveChangesAsync();
+
+                return RedirectToAction("MyMatches", "Supervisor");
             }
-            return RedirectToAction("MyMatches", "Supervisor");
+
+            return RedirectToAction("Dashboard", "Supervisor");
         }
     }
 }
