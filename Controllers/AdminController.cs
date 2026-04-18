@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PUSL2020_Blind_Match_PAS.Data;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using PUSL2020_Blind_Match_PAS.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace PUSL2020_Blind_Match_PAS.Controllers
 {
@@ -21,22 +21,45 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
             return View(allProposals);
         }
 
-      
-        public IActionResult ManageTags()
+        public async Task<IActionResult> ManageTags()
         {
-         
-            var tags = new List<string> { "Artificial Intelligence", "Web Development", "Cybersecurity", "Cloud Computing" };
-            return View(tags);
+            return View(await _context.Tags.ToListAsync());
         }
 
         [HttpPost]
-        public async Task<IActionResult> ResetStatus(int id)
+        public async Task<IActionResult> AddTag(string tagName)
+        {
+            if (!string.IsNullOrEmpty(tagName))
+            {
+                _context.Tags.Add(new Tag { Name = tagName });
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(ManageTags));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Reassign(int id, string newSupervisorName)
+        {
+            var proposal = await _context.Proposals.FindAsync(id);
+            if (proposal != null)
+            {
+                proposal.SupervisorName = newSupervisorName;
+                proposal.Status = "Matched";
+                proposal.IsIdentityRevealed = true; 
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetMatch(int id)
         {
             var proposal = await _context.Proposals.FindAsync(id);
             if (proposal != null)
             {
                 proposal.Status = "Pending";
                 proposal.IsIdentityRevealed = false;
+                proposal.SupervisorName = null;
                 proposal.SupervisorId = null;
                 await _context.SaveChangesAsync();
             }
