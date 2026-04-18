@@ -11,8 +11,8 @@ using PUSL2020_Blind_Match_PAS.Data;
 namespace PUSL2020_Blind_Match_PAS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260418142842_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20260418154555_InitialIdentitySchema")]
+    partial class InitialIdentitySchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
