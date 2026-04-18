@@ -2,18 +2,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PUSL2020_Blind_Match_PAS.Data;
 using PUSL2020_Blind_Match_PAS.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using System.Linq;
 
 namespace PUSL2020_Blind_Match_PAS.Controllers
 {
+    [Authorize(Roles = "Student")]
     public class ProposalController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProposalController(ApplicationDbContext context)
+        public ProposalController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Create()
@@ -27,6 +32,11 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = await _userManager.GetUserAsync(User);
+
+                proposal.StudentName = user.FullName;
+                proposal.StudentId = user.StudentId;
+
                 proposal.Status = "Pending";
                 proposal.IsIdentityRevealed = false;
 
@@ -40,7 +50,12 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
 
         public async Task<IActionResult> MyProposals()
         {
-            var proposals = await _context.Proposals.ToListAsync();
+            var user = await _userManager.GetUserAsync(User);
+
+            var proposals = await _context.Proposals
+                .Where(p => p.StudentId == user.StudentId)
+                .ToListAsync();
+
             return View("~/Views/Proporsal/MyProposals.cshtml", proposals);
         }
 
@@ -69,6 +84,12 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
             {
                 try
                 {
+                    var original = await _context.Proposals.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                    proposal.StudentName = original.StudentName;
+                    proposal.StudentId = original.StudentId;
+                    proposal.Status = original.Status;
+                    proposal.IsIdentityRevealed = original.IsIdentityRevealed;
+
                     _context.Update(proposal);
                     await _context.SaveChangesAsync();
                 }

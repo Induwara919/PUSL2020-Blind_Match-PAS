@@ -1,28 +1,43 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PUSL2020_Blind_Match_PAS.Services;
+using Microsoft.AspNetCore.Identity;
+using PUSL2020_Blind_Match_PAS.Models;
+using PUSL2020_Blind_Match_PAS.Data;
+using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 
 namespace PUSL2020_Blind_Match_PAS.Controllers
 {
+    [Authorize(Roles = "Supervisor")]
     public class MatchController : Controller
     {
-        private readonly ProjectService _projectService;
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public MatchController(ProjectService projectService)
+        public MatchController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            _projectService = projectService;
+            _context = context;
+            _userManager = userManager;
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Confirm(int id)
         {
-            string mockSupervisorId = "SUP-7782";
-            string mockSupervisorName = "Dr. Gamage";
+            var user = await _userManager.GetUserAsync(User);
 
-            bool success = await _projectService.ConfirmMatchAsync(id, mockSupervisorId, mockSupervisorName);
+            var proposal = await _context.Proposals.FindAsync(id);
 
-            if (success)
+            if (proposal != null)
             {
+                proposal.SupervisorName = user.FullName;
+                proposal.SupervisorId = user.Id;
+                proposal.SupervisorContact = user.Email;
+
+                proposal.Status = "Matched";
+                proposal.IsIdentityRevealed = true; 
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction("MyMatches", "Supervisor");
             }
 
