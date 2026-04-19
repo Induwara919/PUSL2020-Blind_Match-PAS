@@ -1,29 +1,169 @@
 @model IEnumerable<PUSL2020_Blind_Match_PAS.Models.ProjectProposal>
 
-<div class="container mt-4">
-    <h2>Admin Oversight Dashboard</h2>
-    <table class="table table-striped shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>Project Title</th>
-                <th>Student</th>
-                <th>Supervisor</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model) {
-                <tr>
-                    <td>@item.Title</td>
-                    <td>@item.StudentName</td>
-                    <td>@(item.SupervisorName ?? "Not Assigned")</td>
-                    <td><span class="badge bg-info">@item.Status</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-danger" onclick="confirmReset(@item.Id)">Reset Match</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+@{
+    ViewData["Title"] = "Oversight Dashboard";
+}
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --glass-bg: rgba(255, 255, 255, 0.9);
+    }
+
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .navbar-custom {
+        background: var(--primary-gradient);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 1rem 2rem;
+    }
+
+    .oversight-card {
+        background: var(--glass-bg);
+        border: none;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+    }
+
+    .table {
+        vertical-align: middle;
+    }
+
+        .table thead th {
+            background-color: transparent;
+            color: #495057;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            border-top: none;
+        }
+
+    .project-title {
+        color: #2d3436;
+        font-size: 1.05rem;
+    }
+
+    .status-pill {
+        padding: 0.5em 1.2em;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+
+    .btn-action {
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+    .supervisor-select {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="fw-bold mb-0 text-dark">
+                <i class="fas fa-chart-pie me-3 text-primary"></i>Allocation Oversight
+            </h2>
+            <p class="text-muted mb-0">Monitor and manage project-supervisor pairings</p>
+        </div>
+        <div class="text-end">
+            <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm">
+                <i class="fas fa-file-alt me-2"></i>@Model.Count() Total Proposals
+            </span>
+        </div>
+    </div>
+
+    <div class="card oversight-card shadow-sm p-4">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="ps-0">Project Information</th>
+                        <th>Student</th>
+                        <th>Supervisor Allocation</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-end pe-0">Management</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-0 py-4">
+                                <div class="project-title fw-bold">@item.Title</div>
+                                <small class="text-muted">ID: #PRO-@item.Id.ToString("D3")</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-light rounded-circle p-2 me-2">
+                                        <i class="fas fa-user-graduate text-secondary"></i>
+                                    </div>
+                                    <span>@item.StudentName</span>
+                                </div>
+                            </td>
+                            <td>
+                                @if (item.Status == "Pending")
+                                {
+                                    <form asp-action="AssignSupervisor" method="post" class="d-flex gap-2 align-items-center">
+                                        <input type="hidden" name="proposalId" value="@item.Id" />
+                                        <select name="supervisorId" class="form-select form-select-sm supervisor-select w-auto" asp-items="ViewBag.Supervisors" required>
+                                            <option value="">Choose Faculty Member...</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-success btn-action px-3">
+                                            Assign
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center text-primary fw-medium">
+                                        <i class="fas fa-user-tie me-2"></i> @item.SupervisorName
+                                    </div>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (item.Status == "Matched")
+                                {
+                                    <span class="status-pill bg-success text-white">
+                                        <i class="fas fa-check-circle me-1"></i> MATCHED
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status-pill bg-warning text-dark">
+                                        <i class="fas fa-clock me-1"></i> PENDING
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-end pe-0">
+                                @if (item.Status == "Matched")
+                                {
+                                    <form asp-action="ResetMatch" asp-route-id="@item.Id" method="post">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger btn-action">
+                                            <i class="fas fa-unlink me-1"></i> Break Match
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Awaiting Review</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
