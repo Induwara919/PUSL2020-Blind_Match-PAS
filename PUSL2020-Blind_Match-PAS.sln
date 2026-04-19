@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.5.11709.299
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37111.16 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PUSL2020-Blind_Match-PAS", "PUSL2020-Blind_Match-PAS.csproj", "{DF9FFF68-9440-4523-9BF2-15E07CEC9A06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PUSL2020_Blind_Match_PAS.Tests", "..\PUSL2020_Blind_Match_PAS.Tests\PUSL2020_Blind_Match_PAS.Tests.csproj", "{9EFCB923-EC10-41B1-9F28-4BD0908C68A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{DF9FFF68-9440-4523-9BF2-15E07CEC9A06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF9FFF68-9440-4523-9BF2-15E07CEC9A06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF9FFF68-9440-4523-9BF2-15E07CEC9A06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EFCB923-EC10-41B1-9F28-4BD0908C68A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EFCB923-EC10-41B1-9F28-4BD0908C68A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EFCB923-EC10-41B1-9F28-4BD0908C68A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EFCB923-EC10-41B1-9F28-4BD0908C68A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
