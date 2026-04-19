@@ -1,47 +1,164 @@
 @model IEnumerable<PUSL2020_Blind_Match_PAS.Models.ProjectProposal>
+@{
+    ViewData["Title"] = "My Proposals";
+}
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>My Submitted Proposals</h2>
-        <a asp-action="Create" class="btn btn-success">Submit New Proposal</a>
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-soft: #f0fdf4;
+        --warning-soft: #fffbeb;
+    }
+
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .proposal-header {
+        background: var(--primary-gradient);
+        border-radius: 20px;
+        padding: 2.5rem;
+        color: white;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    }
+
+    .modern-card {
+        background: white;
+        border: none;
+        border-radius: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+    }
+
+        .modern-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08) !important;
+        }
+
+    .status-badge {
+        font-weight: 700;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 0.6rem 1rem;
+        border-radius: 50px;
+    }
+
+    .match-box {
+        background-color: var(--success-soft);
+        border: 1px solid #dcfce7;
+        border-radius: 15px;
+    }
+
+    .blind-box {
+        background-color: #f9fafb;
+        border: 1px solid #f3f4f6;
+        border-radius: 15px;
+    }
+
+    .btn-action-sm {
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 0.4rem 1rem;
+    }
+
+    .category-text {
+        color: #6366f1;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="proposal-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="fw-bold mb-1">My Proposals</h1>
+            <p class="mb-0 opacity-75">Track and manage your research project submissions</p>
+        </div>
+        <a asp-action="Create" class="btn btn-light btn-lg rounded-pill px-4 fw-bold text-primary shadow-sm">
+            <i class="fas fa-plus-circle me-2"></i>New Proposal
+        </a>
     </div>
 
-    <div class="row">
-        @foreach (var item in Model)
-        {
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <h5 class="card-title text-primary">@item.Title</h5>
-                            <span class="badge @(item.Status == "Matched" ? "bg-success" : "bg-warning text-dark")">
-                                @item.Status
+    @if (!Model.Any())
+    {
+        <div class="card modern-card shadow-sm py-5 text-center">
+            <div class="card-body">
+                <div class="bg-light rounded-circle d-inline-block p-4 mb-4">
+                    <i class="fas fa-pen-nib fa-3x text-muted opacity-50"></i>
+                </div>
+                <h4 class="text-secondary fw-bold">No submissions yet</h4>
+                <p class="text-muted">Start your final year journey by proposing your research idea today.</p>
+                <a asp-action="Create" class="btn btn-primary rounded-pill px-5 mt-3 shadow">Create First Proposal</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-6">
+                    <div class="card modern-card shadow-sm h-100 p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <span class="category-text">@item.ResearchArea</span>
+                                <h4 class="fw-bold text-dark mt-1">@item.Title</h4>
+                            </div>
+                            <span class="status-badge @(item.Status == "Matched" ? "bg-success text-white" : "bg-warning text-dark shadow-none border border-warning")">
+                                <i class="fas @(item.Status == "Matched" ? "fa-check-circle" : "fa-clock") me-1"></i> @item.Status
                             </span>
                         </div>
-                        <p class="text-muted small">Area: @item.ResearchArea</p>
-                        <hr />
-                        
+
+                        <p class="text-muted mb-4 small" style="line-height: 1.6;">
+                            @item.Abstract
+                        </p>
+
+                        <hr class="opacity-50" />
+
                         @if (item.IsIdentityRevealed)
                         {
-                            <div class="alert alert-success">
-                                <strong>Match Confirmed!</strong><br />
-                                <strong>Supervisor:</strong> @item.SupervisorName
+                            <div class="match-box p-3">
+                                <h6 class="text-success fw-bold small mb-2">
+                                    <i class="fas fa-handshake me-2"></i>Supervisor Allocated
+                                </h6>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-success text-white rounded-circle p-2 me-3" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0 fw-bold text-dark">@item.SupervisorName</p>
+                                        <small class="text-muted">@item.SupervisorContact</small>
+                                    </div>
+                                </div>
                             </div>
                         }
                         else
                         {
-                            <p class="card-text text-secondary small italic mb-3">Your identity is currently hidden from supervisors.</p>
-                            
-                            <div class="d-flex">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning me-2">Edit</a>
-                                <form asp-action="Withdraw" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Are you sure you want to withdraw this proposal?');">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Withdraw</button>
-                                </form>
+                            <div class="blind-box p-3 d-flex justify-content-between align-items-center">
+                                <span class="text-muted small fw-medium italic">
+                                    <i class="fas fa-user-secret me-2"></i>Anonymous Review Phase
+                                </span>
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-action-sm">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </a>
+                                    <form asp-action="Withdraw" asp-route-id="@item.Id" method="post"
+                                          onsubmit="return confirm('Are you sure you want to withdraw this proposal?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger btn-action-sm">
+                                            Withdraw
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         }
                     </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
 </div>
