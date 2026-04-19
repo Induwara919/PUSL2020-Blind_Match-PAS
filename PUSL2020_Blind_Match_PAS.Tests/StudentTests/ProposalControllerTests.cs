@@ -60,5 +60,26 @@ namespace PUSL2020_Blind_Match_PAS.Tests.StudentTests
                 Assert.Equal("Cannot edit a proposal that has already been matched.", badRequestResult.Value);
             }
         }
+
+        [Fact]
+        public async Task Withdraw_DoesNotDelete_IfStatusIsMatched()
+        {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: "StudentWithdrawDb").Options;
+
+            using (var context = new ApplicationDbContext(options))
+            {
+                var matchedProposal = new ProjectProposal { Id = 10, Title = "AI Study", Status = "Matched" };
+                context.Proposals.Add(matchedProposal);
+                await context.SaveChangesAsync();
+
+                var controller = new ProposalController(context, null);
+
+                await controller.Withdraw(10);
+
+                var exists = await context.Proposals.AnyAsync(p => p.Id == 10);
+                Assert.True(exists);
+            }
+        }
     }
 }
