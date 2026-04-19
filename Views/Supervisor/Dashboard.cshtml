@@ -1,25 +1,111 @@
 @model IEnumerable<PUSL2020_Blind_Match_PAS.Models.ProjectProposal>
-
 @{
     ViewData["Title"] = "Blind Review Dashboard";
     var tags = ViewBag.AvailableTags as List<string>;
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Blind Review Dashboard</h2>
-        <a asp-action="MyMatches" class="btn btn-outline-success">View My Matches</a>
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --glass-bg: rgba(255, 255, 255, 0.9);
+    }
+
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .dashboard-header {
+        background: var(--primary-gradient);
+        border-radius: 20px;
+        padding: 2.5rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    }
+
+    .filter-card {
+        background: var(--glass-bg);
+        border: none;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .proposal-card {
+        background: white;
+        border: none;
+        border-radius: 18px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+        .proposal-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+        }
+
+    .identity-badge {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        border: 1px solid rgba(220, 53, 69, 0.2);
+    }
+
+    .tech-pill {
+        background: #f1f5f9;
+        color: #475569;
+        font-family: 'SFMono-Regular', Consolas, monospace;
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .btn-interest {
+        background: #10b981;
+        border: none;
+        border-radius: 12px;
+        padding: 0.8rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+        .btn-interest:hover {
+            background: #059669;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+    .area-tag {
+        color: #6366f1;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="dashboard-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="fw-bold mb-1">Blind Review</h1>
+            <p class="mb-0 opacity-75">Focus on the Idea, not the Student.</p>
+        </div>
+        <a asp-action="MyMatches" class="btn btn-light btn-lg rounded-pill px-4 fw-bold text-primary shadow-sm">
+            <i class="fas fa-handshake me-2"></i>My Matches
+        </a>
     </div>
 
-    <div class="card bg-light mb-4 border-0 shadow-sm">
-        <div class="card-body">
+    <div class="card filter-card mb-5">
+        <div class="card-body p-4">
             <form method="get" asp-action="Dashboard" class="row g-3 align-items-center">
                 <div class="col-auto">
-                    <label class="fw-bold">My Expertise / Filter Area:</label>
+                    <span class="text-muted fw-bold small text-uppercase"><i class="fas fa-filter me-2"></i>Filter Area</span>
                 </div>
-                <div class="col-auto">
-                    <select name="selectedArea" class="form-select">
-                        <option value="">-- All Research Areas --</option>
+                <div class="col-md-5">
+                    <select name="selectedArea" class="form-select border-0 bg-light rounded-3 py-2" style="box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                        <option value="">View All Research Fields</option>
                         @if (tags != null)
                         {
                             foreach (var tag in tags)
@@ -30,7 +116,7 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">Update Filter</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4 fw-bold">Apply Filter</button>
                 </div>
             </form>
         </div>
@@ -38,27 +124,46 @@
 
     @if (!Model.Any())
     {
-        <div class="alert alert-secondary text-center">No anonymous proposals found for the selected area.</div>
+        <div class="text-center py-5">
+            <div class="bg-white rounded-circle d-inline-block p-4 mb-4 shadow-sm">
+                <i class="fas fa-folder-open fs-1 text-muted"></i>
+            </div>
+            <h4 class="text-secondary">No proposals currently available</h4>
+            <p class="text-muted">Adjust your research area filters or check back later.</p>
+        </div>
     }
     else
     {
-        <div class="row">
+        <div class="row g-4">
             @foreach (var item in Model)
             {
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100 border-primary shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">@item.Title</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Area: @item.ResearchArea</h6>
-                            <p class="card-text small">@item.Abstract</p>
-                            <p class="card-text"><strong>Tech Stack:</strong> @item.TechnicalStack</p>
-                            
+                <div class="col-lg-6">
+                    <div class="card proposal-card h-100 shadow-sm border-0">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="area-tag">@item.ResearchArea</span>
+                                <span class="badge identity-badge px-3 py-2 rounded-pill small">
+                                    <i class="fas fa-user-secret me-2"></i>IDENTITY ANONYMOUS
+                                </span>
+                            </div>
+
+                            <h4 class="fw-bold text-dark mb-3">@item.Title</h4>
+
+                            <p class="text-muted mb-4" style="line-height: 1.6; font-size: 0.95rem;">
+                                @item.Abstract
+                            </p>
+
+                            <div class="mb-4">
+                                <label class="small text-uppercase fw-bold text-muted d-block mb-2">Technical Environment</label>
+                                <span class="tech-pill">@item.TechnicalStack</span>
+                            </div>
+
                             <form asp-controller="Match" asp-action="Confirm" asp-route-id="@item.Id" method="post">
-                                <button type="submit" class="btn btn-sm btn-success">Express Interest</button>
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success btn-interest w-100 text-white">
+                                    <i class="fas fa-plus-circle me-2"></i>Accept for Supervision
+                                </button>
                             </form>
-                        </div>
-                        <div class="card-footer bg-white border-0 py-2">
-                            <small class="text-danger fw-bold"><i class="fas fa-user-secret"></i> Identity Hidden</small>
                         </div>
                     </div>
                 </div>
