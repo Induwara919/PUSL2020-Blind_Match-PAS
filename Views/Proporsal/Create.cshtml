@@ -1,52 +1,163 @@
-﻿@model PUSL2020_Blind_Match_PAS.Models.ProjectProposal
-
+@model PUSL2020_Blind_Match_PAS.Models.ProjectProposal
 @{
     ViewData["Title"] = "Submit Project Proposal";
+    var tags = ViewBag.Tags as List<PUSL2020_Blind_Match_PAS.Models.Tag>;
 }
 
-<div class="container mt-4">
-    <h2>Submit Your Project Proposal</h2>
-    <hr />
-    <div class="row">
-        <div class="col-md-8">
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --input-focus: rgba(102, 126, 234, 0.15);
+    }
 
-                <div class="form-group mb-3">
-                    <label asp-for="Title" class="control-label fw-bold"></label>
-                    <input asp-for="Title" class="form-control" placeholder="Enter project title" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modern-card {
+        background: white;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+        overflow: hidden;
+    }
+
+    .gradient-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #374151;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.6rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+        border: 1px solid #e5e7eb;
+        background-color: #f9fafb;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #fff;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px var(--input-focus);
+        }
+
+    .info-callout {
+        background-color: #fefce8;
+        border-left: 5px solid #eab308;
+        border-radius: 12px;
+        padding: 1.2rem;
+    }
+
+    .btn-submit {
+        background: var(--primary-gradient);
+        border: none;
+        border-radius: 12px;
+        padding: 0.8rem 2.5rem;
+        font-weight: bold;
+        transition: transform 0.2s;
+    }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(118, 75, 162, 0.3);
+            color: white;
+        }
+
+    .btn-cancel {
+        border-radius: 12px;
+        padding: 0.8rem 2rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card modern-card">
+                <div class="gradient-header">
+                    <h2 class="fw-bold mb-1"><i class="fas fa-paper-plane me-3"></i>Submit Proposal</h2>
+                    <p class="mb-0 opacity-75">Start your research journey by sharing your vision</p>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Abstract" class="control-label fw-bold"></label>
-                    <textarea asp-for="Abstract" class="form-control" rows="5" placeholder="Provide a brief summary of the project"></textarea>
-                    <span asp-validation-for="Abstract" class="text-danger"></span>
-                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
 
-                <div class="form-group mb-3">
-                    <label asp-for="TechnicalStack" class="control-label fw-bold"></label>
-                    <input asp-for="TechnicalStack" class="form-control" placeholder="e.g., ASP.NET Core, SQL Server, React" />
-                    <span asp-validation-for="TechnicalStack" class="text-danger"></span>
-                </div>
+                        <div class="mb-4">
+                            <label asp-for="Title" class="form-label">Project Title</label>
+                            <input asp-for="Title" class="form-control form-control-lg fw-bold"
+                                   placeholder="e.g. Smart Parking System" />
+                            <span asp-validation-for="Title" class="text-danger small mt-1 d-block"></span>
+                        </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="ResearchArea" class="control-label fw-bold"></label>
-                    <select asp-for="ResearchArea" class="form-control">
-                        <option value="">-- Select Research Area --</option>
-                        <option value="Artificial Intelligence">Artificial Intelligence</option>
-                        <option value="Web Development">Web Development</option>
-                        <option value="Cybersecurity">Cybersecurity</option>
-                        <option value="Cloud Computing">Cloud Computing</option>
-                    </select>
-                    <span asp-validation-for="ResearchArea" class="text-danger"></span>
-                </div>
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="ResearchArea" class="form-label">Research Field</label>
+                                <select asp-for="ResearchArea" class="form-select">
+                                    <option value="">-- Select Category --</option>
+                                    @if (tags != null)
+                                    {
+                                        foreach (var tag in tags)
+                                        {
+                                            <option value="@tag.Name">@tag.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="ResearchArea" class="text-danger small mt-1 d-block"></span>
+                            </div>
 
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Submit Proposal</button>
-                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                            <div class="col-md-6">
+                                <label asp-for="TechnicalStack" class="form-label">Tech Stack</label>
+                                <input asp-for="TechnicalStack" class="form-control"
+                                       placeholder="e.g. Flutter, Firebase, Python" />
+                                <span asp-validation-for="TechnicalStack" class="text-danger small mt-1 d-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Abstract" class="form-label">Technical Abstract</label>
+                            <textarea asp-for="Abstract" class="form-control" rows="8"
+                                      placeholder="Explain the problem, your solution, and the methodology..."></textarea>
+                            <span asp-validation-for="Abstract" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="info-callout mb-5">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-shield-alt text-warning fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">Anonymity & Privacy</h6>
+                                    <p class="mb-0 text-muted small">This is a blind review process. Your name and student ID are hidden from supervisors until they express interest in your technical idea.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center border-top pt-4">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-light btn-cancel">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-submit shadow-sm">
+                                Submit for Review <i class="fas fa-chevron-right ms-2 small"></i>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
+
+            <p class="text-center mt-4 text-muted small">
+                 Project Approval System | Group AW
+            </p>
         </div>
     </div>
 </div>
