@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using PUSL2020_Blind_Match_PAS.Models;
 using PUSL2020_Blind_Match_PAS.Data;
@@ -24,10 +24,11 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
         public async Task<IActionResult> Confirm(int id)
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Challenge();
 
             var proposal = await _context.Proposals.FindAsync(id);
 
-            if (proposal != null)
+            if (proposal != null && proposal.Status == "Pending")
             {
                 proposal.SupervisorName = user.FullName;
                 proposal.SupervisorId = user.Id;
