@@ -21,8 +21,9 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.Tags = await _context.Tags.ToListAsync();
             return View("~/Views/Proporsal/Create.cshtml");
         }
 
@@ -38,13 +39,14 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
                 proposal.StudentId = user.StudentId;
 
                 proposal.Status = "Pending";
-                proposal.IsIdentityRevealed = false;
+                proposal.IsIdentityRevealed = false; 
 
                 _context.Add(proposal);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(MyProposals));
             }
+            ViewBag.Tags = await _context.Tags.ToListAsync();
             return View("~/Views/Proporsal/Create.cshtml", proposal);
         }
 
@@ -71,6 +73,7 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
                 return BadRequest("Cannot edit a proposal that has already been matched.");
             }
 
+            ViewBag.Tags = await _context.Tags.ToListAsync();
             return View("~/Views/Proporsal/Edit.cshtml", proposal);
         }
 
@@ -85,6 +88,9 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
                 try
                 {
                     var original = await _context.Proposals.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+
+                    if (original.Status == "Matched") return BadRequest();
+
                     proposal.StudentName = original.StudentName;
                     proposal.StudentId = original.StudentId;
                     proposal.Status = original.Status;
@@ -100,6 +106,7 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
                 }
                 return RedirectToAction(nameof(MyProposals));
             }
+            ViewBag.Tags = await _context.Tags.ToListAsync();
             return View("~/Views/Proporsal/Edit.cshtml", proposal);
         }
 
