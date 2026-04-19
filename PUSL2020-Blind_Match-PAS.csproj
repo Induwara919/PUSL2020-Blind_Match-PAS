@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="PUSL2020_Blind_Match_PAS.Tests\**" />
+    <Content Remove="PUSL2020_Blind_Match_PAS.Tests\**" />
+    <EmbeddedResource Remove="PUSL2020_Blind_Match_PAS.Tests\**" />
+    <None Remove="PUSL2020_Blind_Match_PAS.Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.23" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.23" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.23" />
