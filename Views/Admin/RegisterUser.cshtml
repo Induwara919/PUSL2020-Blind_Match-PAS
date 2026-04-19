@@ -1,55 +1,140 @@
+@model PUSL2020_Blind_Match_PAS.Models.ApplicationUser
+
 @{
-    ViewData["Title"] = "Register New User";
+    ViewData["Title"] = "Create Account";
 }
 
-<div class="container mt-4">
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modern-card {
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .gradient-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #4b5563;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e5e7eb;
+        background-color: #f9fafb;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #fff;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+    .btn-create {
+        background: var(--primary-gradient);
+        border: none;
+        border-radius: 12px;
+        padding: 0.8rem;
+        font-weight: bold;
+        transition: transform 0.3s ease;
+    }
+
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.3);
+            color: white;
+        }
+
+    .btn-cancel {
+        border-radius: 12px;
+        padding: 0.8rem;
+        font-weight: 500;
+        color: #6b7280;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-primary text-white py-3">
-                    <h5 class="mb-0"><i class="fas fa-user-plus me-2"></i> Register New User Account</h5>
+        <div class="col-lg-6 col-md-8">
+            <div class="card modern-card">
+                <div class="gradient-header">
+                    <h3 class="fw-bold mb-1"><i class="fas fa-user-shield me-2"></i>User Management</h3>
+                    <p class="mb-0 opacity-75">Create new secure credentials</p>
                 </div>
-                <div class="card-body p-4">
-                    <p class="text-muted mb-4">Complete the form below to grant access to a Student or Faculty member.</p>
-                    
+
+                <div class="card-body p-4 p-md-5">
                     <form asp-action="RegisterUser" method="post">
+                        <div asp-validation-summary="All" class="text-danger small mb-4"></div>
                         @Html.AntiForgeryToken()
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Full Name</label>
-                            <input type="text" name="fullName" class="form-control" placeholder="Enter legal full name" required />
+                        <div class="mb-4">
+                            <label class="form-label"><i class="fas fa-id-card me-2 text-primary"></i>Full Name</label>
+                            <input type="text" name="fullName" class="form-control" placeholder="Enter Full Name Here" required />
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Email Address</label>
+                        <div class="mb-4">
+                            <label class="form-label"><i class="fas fa-envelope me-2 text-primary"></i>Email Address</label>
                             <input type="email" name="email" class="form-control" placeholder="e.g. name@nsbm.ac.lk" required />
                         </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">User Role</label>
+                        <div class="mb-4">
+                            <label class="form-label"><i class="fas fa-key me-2 text-primary"></i>Set Password</label>
+                            <input name="password" type="password" class="form-control" required placeholder="Minimum 4 characters" />
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label"><i class="fas fa-user-tag me-2 text-primary"></i>Account Role</label>
                                 <select name="role" id="roleSelect" class="form-select" onchange="toggleStudentId()">
-                                    <option value="Student">Student (Individual/Lead)</option>
-                                    <option value="Supervisor">Supervisor (Faculty)</option>
+                                    <option value="Student">Student</option>
+                                    <option value="Supervisor">Supervisor</option>
+                                    <option value="Admin">Module Leader</option>
                                 </select>
                             </div>
-                            <div class="col-md-6" id="studentIdContainer">
-                                <label class="form-label fw-bold">Student ID</label>
-                                <input type="text" name="studentId" class="form-control" placeholder="e.g. 2100xxxx" />
+
+                            <div class="col-md-6 mb-4" id="studentIdContainer">
+                                <label class="form-label"><i class="fas fa-graduation-cap me-2 text-primary"></i>Student ID</label>
+                                <input type="text" name="studentId" class="form-control" placeholder="8-digit ID" />
                             </div>
                         </div>
 
-                        <div class="alert alert-info py-2 small">
-                            <i class="fas fa-info-circle me-1"></i> Temporary passwords will be generated and sent to the registered email.
-                        </div>
+                        <hr class="my-4 opacity-50" />
 
-                        <div class="d-flex justify-content-end mt-4">
-                            <a asp-action="Index" class="btn btn-outline-secondary me-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary px-4">Create Account</button>
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-primary btn-create">
+                                <i class="fas fa-plus-circle me-2"></i>Create Account
+                            </button>
+                            <a asp-action="Index" class="btn btn-light btn-cancel">
+                                Cancel
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
+
+            <p class="text-center mt-4 text-muted small">
+                 Project Approval System | Group AW
+            </p>
         </div>
     </div>
 </div>
@@ -59,11 +144,12 @@
         function toggleStudentId() {
             var role = document.getElementById("roleSelect").value;
             var container = document.getElementById("studentIdContainer");
-            if (role === "Supervisor") {
-                container.style.visibility = "hidden";
+            if (role === "Student") {
+                container.style.display = "block";
             } else {
-                container.style.visibility = "visible";
+                container.style.display = "none";
             }
         }
+        document.addEventListener("DOMContentLoaded", toggleStudentId);
     </script>
 }
