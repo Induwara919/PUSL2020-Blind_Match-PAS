@@ -125,5 +125,102 @@ namespace PUSL2020_Blind_Match_PAS.Controllers
             }
             return RedirectToAction(nameof(ManageTags));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> UsersList()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            return View(users);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var roles = await _userManager.GetRolesAsync(user);
+            ViewBag.UserRole = roles.FirstOrDefault();
+
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditUser(string id, string fullName, string? studentId)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            string oldName = user.FullName;
+            string? oldStudentId = user.StudentId;
+
+            user.FullName = fullName;
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles.Contains("Student")) { user.StudentId = studentId; }
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                if (roles.Contains("Student"))
+                {
+                    var studentProposals = _context.Proposals.Where(p => p.StudentId == oldStudentId);
+
+                    foreach (var p in studentProposals)
+                    {
+                        p.StudentId = studentId;   
+                        p.StudentName = fullName; 
+                    }
+                }
+
+                if (roles.Contains("Supervisor") && oldName != fullName)
+                {
+                    var supervisorMatches = _context.Proposals.Where(p => p.SupervisorName == oldName);
+                    foreach (var p in supervisorMatches) { p.SupervisorName = fullName; }
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(UsersList));
+            }
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("Student"))
+            {
+                var hasProposals = _context.Proposals.Any(p => p.StudentId == user.StudentId);
+                if (hasProposals)
+                {
+                    TempData["ErrorMessage"] = "Deletion Blocked: This student has active proposals. They must withdraw their proposals before the account can be removed.";
+                    return RedirectToAction(nameof(UsersList));
+                }
+            }
+
+            if (roles.Contains("Supervisor"))
+            {
+                var hasMatches = _context.Proposals.Any(p => p.SupervisorName == user.FullName && p.IsIdentityRevealed);
+                if (hasMatches)
+                {
+                    TempData["ErrorMessage"] = "Deletion Blocked: This supervisor has active project matches. You must reset their matches in the Oversight Dashboard first.";
+                    return RedirectToAction(nameof(UsersList));
+                }
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                TempData["ErrorMessage"] = "Error occurred while deleting the user.";
+            }
+
+            return RedirectToAction(nameof(UsersList));
+        }
     }
 }

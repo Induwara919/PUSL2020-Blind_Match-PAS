@@ -25,13 +25,20 @@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active fw-bold" : "")" asp-controller="Admin" asp-action="Index">Oversight</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Oversight" ? "active fw-bold" : "")"
+                                       asp-controller="Admin" asp-action="Index">Oversight</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Admin" asp-action="RegisterUser">User Management</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "UsersList" ? "active fw-bold" : "")"
+                                       asp-controller="Admin" asp-action="UsersList">User Management</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Admin" asp-action="ManageTags">Research Areas</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "RegisterUser" ? "active fw-bold" : "")"
+                                       asp-controller="Admin" asp-action="RegisterUser">Create User</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "ManageTags" ? "active fw-bold" : "")"
+                                       asp-controller="Admin" asp-action="ManageTags">Research Areas</a>
                                 </li>
                             }
                         }

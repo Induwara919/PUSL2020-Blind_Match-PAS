@@ -1,0 +1,64 @@
+﻿@model PUSL2020_Blind_Match_PAS.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Update User Profile";
+    string role = ViewBag.UserRole;
+}
+
+<style>
+    .gradient-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .modern-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card modern-card">
+                <div class="gradient-header">
+                    <h3 class="fw-bold mb-1">Update Account</h3>
+                    <p class="mb-0 opacity-75">Modifying profile for @Model.Email</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="EditUser" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small">Full Name</label>
+                            <input type="text" name="fullName" value="@Model.FullName" class="form-control form-control-lg bg-light" required />
+                        </div>
+
+                        @if (role == "Student")
+                        {
+                            <div class="mb-4">
+                                <label class="form-label fw-bold small">Student ID</label>
+                                <input type="text" name="studentId" value="@Model.StudentId" class="form-control form-control-lg bg-light" />
+                            </div>
+                        }
+
+                        <div class="alert alert-secondary border-0 small py-2 px-3 mb-4">
+                            <i class="fas fa-info-circle me-2"></i>Note: Email and Role cannot be changed for system integrity.
+                        </div>
+
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm py-3 fw-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border:none;">
+                                Save Changes
+                            </button>
+                            <a asp-action="UsersList" class="btn btn-link text-muted text-decoration-none">Cancel and Return</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
